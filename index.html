@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="assets/infranova-symbol.png">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:#f7f8f7}
+  ::selection{background:#7ac143;color:#fff}
+  a{color:inherit}
+</style>
+</helmet>
+<div style="font-family:'IBM Plex Sans',system-ui,sans-serif;color:#353d43;-webkit-font-smoothing:antialiased">
+
+<!-- ================= PUBLIC SITE ================= -->
+<sc-if value="{{ showSite }}" hint-placeholder-val="{{ true }}">
+<div id="top" style="background:#f7f8f7;min-height:100vh">
+
+  <!-- Header -->
+  <header style="position:sticky;top:0;z-index:50;background:rgba(247,248,247,.92);backdrop-filter:saturate(140%) blur(10px);border-top:4px solid #7ac143;border-bottom:1px solid #e3e7e4">
+    <div style="max-width:1180px;margin:0 auto;padding:0 32px;height:84px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <a href="#top" style="display:flex;align-items:center;text-decoration:none">
+        <img src="assets/infranova-logo.png" alt="Infranova AS" style="height:46px;display:block"/>
+      </a>
+      <nav style="display:flex;align-items:center;gap:30px">
+        <a href="#om" style="font-size:14.5px;font-weight:500;color:#4a525a;text-decoration:none">Om oss</a>
+        <a href="#tjenester" style="font-size:14.5px;font-weight:500;color:#4a525a;text-decoration:none">Tjenester</a>
+        <a href="#referanser" style="font-size:14.5px;font-weight:500;color:#4a525a;text-decoration:none">Referanser</a>
+        <a href="#kontakt" style="font-size:14.5px;font-weight:500;color:#4a525a;text-decoration:none">Kontakt</a>
+        <sc-if value="{{ notLoggedIn }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ goLogin }}" style="font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;color:#2c333a;background:#fff;border:1px solid #d4dad4;border-radius:7px;padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap" style-hover="border-color:#7ac143;color:#5fa531">
+            <span style="width:7px;height:7px;border-radius:50%;background:#7ac143;display:inline-block"></span>
+            Ansattinnlogging
+          </button>
+        </sc-if>
+        <sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ goTools }}" style="font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;color:#16320a;background:#7ac143;border:none;border-radius:7px;padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap" style-hover="background:#8ace53">
+            Mine verktøy →
+          </button>
+        </sc-if>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO (variant A) -->
+  <section style="position:relative;min-height:600px;display:flex;align-items:flex-end;background:#2f363c;overflow:hidden">
+    <img src="assets/hero-forside.png" alt="Infranova på vegprosjekt ved fjorden – asfaltering og kontroll" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:62% 42%;display:block"/>
+    <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(25,30,34,.94) 0%,rgba(25,30,34,.8) 40%,rgba(25,30,34,.42) 100%)"></div>
+    <div style="position:relative;max-width:1180px;margin:0 auto;padding:0 32px;width:100%">
+      <div style="max-width:680px;padding:96px 0 100px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#9cd96a;font-weight:500;margin-bottom:22px">Konsulent for anleggsbransjen</div>
+        <h1 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(34px,5vw,56px);line-height:1.05;letter-spacing:-.02em;color:#fff;margin:0 0 22px">Faglig tyngde gjennom hele anleggsprosjektet</h1>
+        <p style="font-size:18px;line-height:1.6;color:rgba(255,255,255,.82);margin:0 0 34px;max-width:560px">Fra prosjektering og kalkulasjon til stikning, masseberegning og dronekartlegging — Infranova AS leverer presis rådgivning til anleggsbransjen.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <a href="#tjenester" style="font-size:15px;font-weight:600;color:#16320a;background:#7ac143;border-radius:8px;padding:14px 24px;text-decoration:none" style-hover="background:#8ace53">Se våre tjenester</a>
+          <a href="#kontakt" style="font-size:15px;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:14px 24px;text-decoration:none" style-hover="border-color:#fff">Ta kontakt</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OM OSS -->
+  <section id="om" style="scroll-margin-top:96px;padding:100px 0;background:#fff;border-bottom:1px solid #e3e7e4">
+    <div style="max-width:1180px;margin:0 auto;padding:0 32px">
+      <div style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:64px;align-items:start;margin-bottom:52px">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#5fa531;font-weight:500;margin-bottom:18px">Om Infranova AS</div>
+          <h2 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(28px,3.4vw,40px);line-height:1.12;letter-spacing:-.02em;color:#2c333a;margin:0 0 22px">Et nytt konsulentfirma med solid fagkompetanse</h2>
+          <p style="font-size:16.5px;line-height:1.7;color:#5b646b;margin:0 0 18px">Infranova AS ble stiftet i august 2025 av Magne Knutsen. Vi leverer rådgivnings- og ingeniørtjenester til anleggsbransjen, med vekt på presisjon, ryddig gjennomføring og tett oppfølging gjennom hele prosjektet.</p>
+          <p style="font-size:16.5px;line-height:1.7;color:#5b646b;margin:0">Vi jobber på tvers av prosjektering, kalkulasjon og kontroll — og tilbyr stikningstjenester som utsetting, innmåling og kartlegging med drone. Målet er enkelt: riktig grunnlag, riktig mengde, riktig pris.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#e3e7e4;border:1px solid #e3e7e4;border-radius:8px;overflow:hidden">
+          <div style="background:#fff;padding:18px 20px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8a938c;letter-spacing:.08em;margin-bottom:5px">STIFTET</div><div style="font-family:'Archivo',sans-serif;font-weight:600;font-size:17px;color:#2c333a">August 2025</div></div>
+          <div style="background:#fff;padding:18px 20px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8a938c;letter-spacing:.08em;margin-bottom:5px">GRUNNLEGGER</div><div style="font-family:'Archivo',sans-serif;font-weight:600;font-size:17px;color:#2c333a">Magne Knutsen</div></div>
+          <div style="background:#fff;padding:18px 20px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8a938c;letter-spacing:.08em;margin-bottom:5px">BRANSJE</div><div style="font-family:'Archivo',sans-serif;font-weight:600;font-size:17px;color:#2c333a">Anlegg & infrastruktur</div></div>
+          <div style="background:#fff;padding:18px 20px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8a938c;letter-spacing:.08em;margin-bottom:5px">FAGOMRÅDER</div><div style="font-family:'Archivo',sans-serif;font-weight:600;font-size:17px;color:#2c333a">Rådgivning · stikning · drone</div></div>
+        </div>
+      </div>
+      <figure style="margin:0;position:relative;border-radius:12px;overflow:hidden;border:1px solid #e3e7e4;box-shadow:0 1px 3px rgba(0,0,0,.05)">
+        <img src="assets/om-anlegg.png" alt="Infranova på anlegg – dronekartlegging ved veistrekning" style="width:100%;display:block"/>
+        <figcaption style="position:absolute;left:16px;bottom:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#fff;background:rgba(25,30,34,.6);backdrop-filter:blur(4px);padding:6px 11px;border-radius:6px">Infranova på anlegg · dronekartlegging</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- TJENESTER -->
+  <section id="tjenester" style="scroll-margin-top:96px;padding:100px 0;background:#f7f8f7;border-bottom:1px solid #e3e7e4">
+    <div style="max-width:1180px;margin:0 auto;padding:0 32px">
+      <div style="max-width:640px;margin-bottom:48px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#5fa531;font-weight:500;margin-bottom:18px">Våre tjenester</div>
+        <h2 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(28px,3.4vw,40px);line-height:1.12;letter-spacing:-.02em;color:#2c333a;margin:0 0 16px">Fra prosjektering til ferdig kontrollert anlegg</h2>
+        <p style="font-size:16.5px;line-height:1.7;color:#5b646b;margin:0">Et samlet tjenestetilbud for entreprenører og byggherrer i anleggsbransjen.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:#e3e7e4;border:1px solid #e3e7e4;border-radius:10px;overflow:hidden">
+        <sc-for list="{{ services }}" as="s" hint-placeholder-count="6">
+          <div style="background:#fff;padding:32px 30px 36px;display:flex;flex-direction:column" style-hover="background:#fcfdfc">
+            <sc-if value="{{ s.hasImg }}" hint-placeholder-val="{{ false }}">{{ s.imgEl }}</sc-if>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7ac143;font-weight:600;letter-spacing:.12em">{{ s.num }}</div>
+            <h3 style="font-family:'Archivo',sans-serif;font-size:19px;font-weight:600;margin:16px 0 9px;color:#2c333a;letter-spacing:-.01em">{{ s.title }}</h3>
+            <p style="margin:0;font-size:14.5px;line-height:1.62;color:#5b646b">{{ s.desc }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFERANSER -->
+  <section id="referanser" style="scroll-margin-top:96px;padding:100px 0;background:#fff;border-bottom:1px solid #e3e7e4">
+    <div style="max-width:1180px;margin:0 auto;padding:0 32px">
+      <div style="max-width:680px;margin-bottom:40px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#5fa531;font-weight:500;margin-bottom:18px">Referanseprosjekter</div>
+        <h2 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(28px,3.4vw,40px);line-height:1.12;letter-spacing:-.02em;color:#2c333a;margin:0">Et utvalg av våre prosjekter</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);border:1px solid #e3e7e4;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:24px">
+        <div style="position:relative;min-height:380px;background:#eef1ee">
+          <img src="assets/ref-bauda-1.jpg" alt="Bilklargjøringssenter for Bauda – ferdig anlegg sett ovenfra" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block"/>
+        </div>
+        <div style="padding:38px 36px;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin-bottom:16px"><span style="color:#5fa531">Prosjekt 01</span><span style="width:4px;height:4px;border-radius:50%;background:#cbd2cb"></span><span style="color:#8a938c">2025</span></div>
+          <h3 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:25px;line-height:1.15;letter-spacing:-.01em;color:#2c333a;margin:0 0 14px">Bilklargjøringssenter for Bauda</h3>
+          <div style="display:flex;align-items:center;gap:9px;font-size:14.5px;color:#5b646b;margin-bottom:18px"><span style="width:8px;height:8px;border-radius:50%;background:#7ac143;display:inline-block;flex:none"></span>Fiskumparken, Øvre Eiker kommune</div>
+          <p style="font-size:15px;line-height:1.65;color:#5b646b;margin:0 0 22px">Nytt klargjøringssenter med verksted- og lagerbygg, og store, nyopparbeidede dekker og uteareal for klargjøring og lagring av biler.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Prosjektering</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Masseberegning</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Stikning</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Dronekartlegging</span>
+          </div>
+          <div style="margin-top:22px;border-radius:8px;overflow:hidden;border:1px solid #e3e7e4;aspect-ratio:16/9;background:#eef1ee">
+            <img src="assets/ref-bauda-2.jpg" alt="Bilklargjøringssenter for Bauda – sett fra annen vinkel" style="width:100%;height:100%;object-fit:cover;display:block"/>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);border:1px solid #e3e7e4;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:24px">
+        <div style="padding:38px 36px;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin-bottom:16px"><span style="color:#5fa531">Prosjekt 02</span><span style="width:4px;height:4px;border-radius:50%;background:#cbd2cb"></span><span style="color:#8a938c">2025</span></div>
+          <h3 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:25px;line-height:1.15;letter-spacing:-.01em;color:#2c333a;margin:0 0 14px">Lager- og næringsbygg for E-wheels og Kajakk &amp; Fritid</h3>
+          <div style="display:flex;align-items:center;gap:9px;font-size:14.5px;color:#5b646b;margin-bottom:18px"><span style="width:8px;height:8px;border-radius:50%;background:#7ac143;display:inline-block;flex:none"></span>Fiskumparken, Øvre Eiker kommune</div>
+          <p style="font-size:15px;line-height:1.65;color:#5b646b;margin:0 0 22px">Nytt lager- og næringsbygg med butikk og utstilling og store lagerhaller med lasteramper — med opparbeidet tomt, vei, murer og uteareal.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Prosjektering</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Masseberegning</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Stikning</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Dronekartlegging</span>
+          </div>
+          <div style="margin-top:22px;border-radius:8px;overflow:hidden;border:1px solid #e3e7e4;aspect-ratio:16/9;background:#eef1ee">
+            <img src="assets/ref-ewheels-2.jpg" alt="Lager- og næringsbygg for E-wheels – sett fra annen vinkel" style="width:100%;height:100%;object-fit:cover;display:block"/>
+          </div>
+        </div>
+        <div style="position:relative;min-height:380px;background:#eef1ee">
+          <img src="assets/ref-ewheels-1.jpg" alt="Lager- og næringsbygg for E-wheels og Kajakk &amp; Fritid – ferdig anlegg sett ovenfra" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block"/>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);border:1px solid #e3e7e4;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:24px">
+        <div style="position:relative;min-height:380px;background:#eef1ee">
+          <img src="assets/ref-feltc-1.jpg" alt="Nye næringsarealer Fiskumparken Felt C – opparbeidet tomt sett ovenfra" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block"/>
+        </div>
+        <div style="padding:38px 36px;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin-bottom:16px"><span style="color:#5fa531">Prosjekt 03</span><span style="width:4px;height:4px;border-radius:50%;background:#cbd2cb"></span><span style="color:#8a938c">Prosjektering</span></div>
+          <h3 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:25px;line-height:1.15;letter-spacing:-.01em;color:#2c333a;margin:0 0 14px">Nye næringsarealer — Fiskumparken Felt C</h3>
+          <div style="display:flex;align-items:center;gap:9px;font-size:14.5px;color:#5b646b;margin-bottom:18px"><span style="width:8px;height:8px;border-radius:50%;background:#7ac143;display:inline-block;flex:none"></span>Fiskumparken, Øvre Eiker kommune</div>
+          <p style="font-size:15px;line-height:1.65;color:#5b646b;margin:0 0 22px">Prosjektering av nye næringsområder, med optimalisering av tomter med tanke på massebalanse, økonomi og marked. Tomtene får god utsikt mot Fiskumvannet og god eksponering mot E134.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Prosjektering</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Massebalanse</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Økonomi</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5b646b;background:#f3f6f1;border:1px solid #e3e7e4;border-radius:999px;padding:5px 11px">Marked</span>
+          </div>
+          <div style="margin-top:22px;border-radius:8px;overflow:hidden;border:1px solid #e3e7e4;aspect-ratio:16/9;background:#eef1ee">
+            <img src="assets/ref-feltc-2.jpg" alt="Nye næringsarealer Fiskumparken Felt C – tomter med eksponering mot E134" style="width:100%;height:100%;object-fit:cover;display:block"/>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8a938c;border:1px dashed #d4dad4;border-radius:10px;padding:20px">Flere referanseprosjekter legges inn fortløpende.</div>
+    </div>
+  </section>
+
+  <!-- KONTAKT -->
+  <section id="kontakt" style="scroll-margin-top:96px;padding:96px 0;background:#2b3138;color:#fff">
+    <div style="max-width:1180px;margin:0 auto;padding:0 32px">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:60px;align-items:center">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#9cd96a;font-weight:500;margin-bottom:18px">Ta kontakt</div>
+          <h2 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(28px,3.4vw,40px);line-height:1.12;letter-spacing:-.02em;margin:0 0 16px">La oss ta en prat om prosjektet ditt</h2>
+          <p style="font-size:16.5px;line-height:1.7;color:rgba(255,255,255,.72);margin:0">Enten det gjelder prosjektering, kalkulasjon, stikning eller dronekartlegging — ta kontakt for en uforpliktende samtale.</p>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:32px">
+          <div style="font-family:'Archivo',sans-serif;font-weight:600;font-size:20px;margin-bottom:4px">Magne Knutsen</div>
+          <div style="font-size:14px;color:rgba(255,255,255,.6);margin-bottom:18px">Grunnlegger · Infranova AS</div>
+          <a href="tel:+4798234581" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:#fff;padding:14px 0;border-top:1px solid rgba(255,255,255,.12)">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.5)">TELEFON</span>
+            <span style="font-size:16px;font-weight:500">+47 982 34 581</span>
+          </a>
+          <a href="mailto:magne@infranova.no" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:#fff;padding:14px 0;border-top:1px solid rgba(255,255,255,.12)">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.5)">E-POST</span>
+            <span style="font-size:16px;font-weight:500">magne@infranova.no</span>
+          </a>
+          <a href="https://www.google.com/maps?q=Liarvegen+17,+4265+H%C3%A5vik" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:#fff;padding:14px 0;border-top:1px solid rgba(255,255,255,.12);gap:20px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.5)">ADRESSE</span>
+            <span style="font-size:16px;font-weight:500;text-align:right">Liarvegen 17, 4265 Håvik</span>
+          </a>
+        </div>
+      </div>
+      <div style="margin-top:48px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.12)">
+        <iframe title="Kart – Liarvegen 17, 4265 Håvik" src="https://www.google.com/maps?q=Liarvegen%2017,%204265%20H%C3%A5vik&output=embed" style="width:100%;height:360px;border:0;display:block;filter:grayscale(.2)" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:#f7f8f7;padding:40px 0">
+    <div style="max-width:1180px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px">
+      <div style="display:flex;align-items:center;gap:16px">
+        <img src="assets/infranova-logo.png" alt="Infranova AS" style="height:36px;display:block"/>
+      </div>
+      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+        <a href="#om" style="font-size:13.5px;color:#5b646b;text-decoration:none">Om oss</a>
+        <a href="#tjenester" style="font-size:13.5px;color:#5b646b;text-decoration:none">Tjenester</a>
+        <a href="#kontakt" style="font-size:13.5px;color:#5b646b;text-decoration:none">Kontakt</a>
+        <button onClick="{{ goLogin }}" style="font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:#5b646b;background:none;border:none;cursor:pointer;padding:0">Ansattinnlogging</button>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#9aa29c">© {{ year }} Infranova AS</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</sc-if>
+
+<!-- ================= LOGIN ================= -->
+<sc-if value="{{ showLogin }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f7f8f7;background-image:linear-gradient(rgba(122,193,67,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(122,193,67,.05) 1px,transparent 1px);background-size:26px 26px;padding:32px">
+  <div style="width:100%;max-width:430px">
+    <div style="background:#fff;border:1px solid #e3e7e4;border-radius:12px;padding:40px;box-shadow:0 4px 24px rgba(0,0,0,.05)">
+      <img src="assets/infranova-logo.png" alt="Infranova AS" style="height:40px;display:block;margin-bottom:28px"/>
+      <h1 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:24px;color:#2c333a;margin:0 0 6px;letter-spacing:-.01em">Ansattinnlogging</h1>
+      <p style="font-size:14.5px;color:#5b646b;line-height:1.6;margin:0 0 26px">Logg inn for tilgang til Infranovas interne verktøy.</p>
+      <label style="display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#5b646b;margin-bottom:8px">E-post</label>
+      <input type="email" value="{{ email }}" onInput="{{ onEmailInput }}" onKeyDown="{{ onPwKey }}" placeholder="navn@infranova.no" autocomplete="username" style="width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:15px;padding:12px 14px;border:1px solid #d4dad4;border-radius:8px;background:#fff;color:#2c333a;outline:none;margin-bottom:18px" style-focus="border-color:#7ac143"/>
+      <label style="display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#5b646b;margin-bottom:8px">Passord</label>
+      <input type="password" value="{{ pw }}" onInput="{{ onPwInput }}" onKeyDown="{{ onPwKey }}" placeholder="Skriv inn passord" autocomplete="current-password" style="width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:15px;padding:12px 14px;border:1px solid #d4dad4;border-radius:8px;background:#fff;color:#2c333a;outline:none" style-focus="border-color:#7ac143"/>
+      <sc-if value="{{ loginError }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:12px;font-size:13.5px;color:#b23e1d;display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#b23e1d;display:inline-block"></span>Feil e-post eller passord. Prøv igjen.</div>
+      </sc-if>
+      <button onClick="{{ submitLogin }}" style="width:100%;margin-top:22px;font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:600;color:#16320a;background:#7ac143;border:none;border-radius:8px;padding:13px;cursor:pointer" style-hover="background:#8ace53">Logg inn</button>
+      <button onClick="{{ goSite }}" style="width:100%;margin-top:12px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:#5b646b;background:none;border:none;cursor:pointer;padding:8px">← Tilbake til nettsiden</button>
+    </div>
+    <p style="text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9aa29c;margin-top:18px;line-height:1.6">Enkel tilgangssperre · brukere lagres lokalt i nettleseren</p>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= INTERNAL TOOLS ================= -->
+<sc-if value="{{ showTools }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;background:#f7f8f7">
+  <header style="background:#2b3138;border-bottom:3px solid #7ac143">
+    <div style="max-width:1180px;margin:0 auto;padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:20px">
+      <div style="display:flex;align-items:center;gap:14px">
+        <img src="assets/infranova-symbol.png" alt="" style="height:28px;display:block"/>
+        <span style="font-family:'Archivo',sans-serif;font-weight:600;font-size:16px;color:#fff;letter-spacing:.01em">Interne verktøy</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onClick="{{ setTabVerktoy }}" style="{{ tabVerktoyStyle }}">Verktøy</button>
+        <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ setTabAnsatte }}" style="{{ tabAnsatteStyle }}">Ansatte</button>
+        </sc-if>
+        <span style="width:1px;height:24px;background:rgba(255,255,255,.16);margin:0 6px"></span>
+        <button onClick="{{ goSite }}" style="font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;font-weight:500;color:rgba(255,255,255,.8);background:none;border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:8px 14px;cursor:pointer;white-space:nowrap" style-hover="border-color:rgba(255,255,255,.5);color:#fff">Til nettsiden</button>
+        <button onClick="{{ logout }}" style="font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;font-weight:600;color:#16320a;background:#7ac143;border:none;border-radius:7px;padding:8px 14px;cursor:pointer;white-space:nowrap" style-hover="background:#8ace53">Logg ut</button>
+      </div>
+    </div>
+  </header>
+
+  <div style="max-width:1180px;margin:0 auto;padding:48px 32px 80px">
+
+    <!-- VERKTØY TAB -->
+    <sc-if value="{{ showVerktoy }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:36px">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#5fa531;font-weight:500;margin-bottom:14px">Verktøykasse</div>
+          <h1 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:34px;color:#2c333a;margin:0 0 10px;letter-spacing:-.02em">Velg et verktøy</h1>
+          <p style="font-size:16px;color:#5b646b;margin:0;max-width:620px;line-height:1.6">Verktøyene kjører lokalt i nettleseren — Python via Pyodide. Excel-maler lastes ned i hvert enkelt verktøy.</p>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#5b646b;background:#fff;border:1px solid #e3e7e4;border-radius:999px;padding:9px 16px;white-space:nowrap">Innlogget: <b style="color:#2c333a">{{ currentName }}</b> · {{ currentRoleLabel }}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:44px">
+        <sc-for list="{{ toolGroups }}" as="group" hint-placeholder-count="3">
+          <div>
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+              <h2 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:20px;color:#2c333a;margin:0;letter-spacing:-.01em;white-space:nowrap">{{ group.category }}</h2>
+              <span style="flex:1;height:1px;background:#e3e7e4"></span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9aa29c;white-space:nowrap">{{ group.label }}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px">
+              <sc-for list="{{ group.items }}" as="tool" hint-placeholder-count="2">
+                <sc-if value="{{ tool.download }}" hint-placeholder-val="{{ false }}">
+                  <a href="{{ tool.href }}" download style="display:flex;flex-direction:column;background:#fff;border:1px solid #d6e6c4;border-radius:12px;padding:26px;text-decoration:none;color:inherit;box-shadow:0 1px 2px rgba(0,0,0,.03);min-height:210px" style-hover="border-color:#7ac143;box-shadow:0 8px 24px rgba(122,193,67,.14)">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:auto">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8a938c">{{ tool.tag }}</span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#1f5b2a;background:#dff0cd;padding:4px 9px;border-radius:999px">Excel</span>
+                    </div>
+                    <h3 style="font-family:'Archivo',sans-serif;font-size:20px;font-weight:600;color:#2c333a;margin:22px 0 9px;letter-spacing:-.01em">{{ tool.title }}</h3>
+                    <p style="font-size:14px;line-height:1.6;color:#5b646b;margin:0 0 18px">{{ tool.desc }}</p>
+                    <span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:#5fa531"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M12 16l-4-4M12 16l4-4"/><path d="M5 20h14"/></svg>Last ned Excel-fil</span>
+                  </a>
+                </sc-if>
+                <sc-if value="{{ tool.activeLink }}" hint-placeholder-val="{{ true }}">
+                  <a href="{{ tool.href }}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;background:#fff;border:1px solid #d6e6c4;border-radius:12px;padding:26px;text-decoration:none;color:inherit;box-shadow:0 1px 2px rgba(0,0,0,.03);min-height:210px" style-hover="border-color:#7ac143;box-shadow:0 8px 24px rgba(122,193,67,.14)">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:auto">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8a938c">{{ tool.tag }}</span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#16320a;background:#7ac143;padding:4px 9px;border-radius:999px">Aktiv</span>
+                    </div>
+                    <h3 style="font-family:'Archivo',sans-serif;font-size:20px;font-weight:600;color:#2c333a;margin:22px 0 9px;letter-spacing:-.01em">{{ tool.title }}</h3>
+                    <p style="font-size:14px;line-height:1.6;color:#5b646b;margin:0 0 18px">{{ tool.desc }}</p>
+                    <span style="font-size:14px;font-weight:600;color:#5fa531">Åpne verktøyet →</span>
+                  </a>
+                </sc-if>
+                <sc-if value="{{ tool.inactive }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;background:#fbfcfb;border:1px solid #e9ece9;border-radius:12px;padding:26px;min-height:210px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:auto">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#aeb5b1">{{ tool.tag }}</span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:#8a938c;background:#eef1ee;padding:4px 9px;border-radius:999px">Kommer snart</span>
+                    </div>
+                    <h3 style="font-family:'Archivo',sans-serif;font-size:20px;font-weight:600;color:#9aa29c;margin:22px 0 9px;letter-spacing:-.01em">{{ tool.title }}</h3>
+                    <p style="font-size:14px;line-height:1.6;color:#aeb5b1;margin:0 0 18px">{{ tool.desc }}</p>
+                    <span style="font-size:14px;font-weight:500;color:#bcc2bd">Ikke tilgjengelig ennå</span>
+                  </div>
+                </sc-if>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- ANSATTE TAB (admin) -->
+    <sc-if value="{{ showAnsatte }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:36px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#5fa531;font-weight:500;margin-bottom:14px">Administrasjon</div>
+        <h1 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:34px;color:#2c333a;margin:0 0 10px;letter-spacing:-.02em">Ansatte</h1>
+        <p style="font-size:16px;color:#5b646b;margin:0;max-width:640px;line-height:1.6">Inviter ansatte og styr tilgangsnivå. Administratorer kan administrere brukere; brukere har kun tilgang til verktøyene.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:24px;align-items:start">
+        <!-- Invite -->
+        <div style="background:#fff;border:1px solid #e3e7e4;border-radius:12px;padding:26px">
+          <h3 style="font-family:'Archivo',sans-serif;font-size:18px;font-weight:600;color:#2c333a;margin:0 0 4px">Inviter ansatt</h3>
+          <p style="font-size:13.5px;color:#8a938c;margin:0 0 20px;line-height:1.55">Det opprettes et midlertidig passord du deler med den ansatte.</p>
+          <label style="display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b646b;margin-bottom:7px">Navn</label>
+          <input type="text" value="{{ invName }}" onInput="{{ onInvName }}" placeholder="Ola Nordmann" style="width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:14.5px;padding:11px 13px;border:1px solid #d4dad4;border-radius:8px;background:#fff;color:#2c333a;outline:none;margin-bottom:16px" style-focus="border-color:#7ac143"/>
+          <label style="display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b646b;margin-bottom:7px">E-post</label>
+          <input type="email" value="{{ invEmail }}" onInput="{{ onInvEmail }}" placeholder="ola@infranova.no" style="width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:14.5px;padding:11px 13px;border:1px solid #d4dad4;border-radius:8px;background:#fff;color:#2c333a;outline:none;margin-bottom:16px" style-focus="border-color:#7ac143"/>
+          <label style="display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b646b;margin-bottom:7px">Tilgangsnivå</label>
+          <select value="{{ invRole }}" onChange="{{ onInvRole }}" style="width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:14.5px;padding:11px 13px;border:1px solid #d4dad4;border-radius:8px;background:#fff;color:#2c333a;outline:none;cursor:pointer;margin-bottom:20px" style-focus="border-color:#7ac143">
+            <option value="bruker">Bruker — tilgang til verktøy</option>
+            <option value="admin">Administrator — full tilgang</option>
+          </select>
+          <button onClick="{{ doInvite }}" style="width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:14.5px;font-weight:600;color:#16320a;background:#7ac143;border:none;border-radius:8px;padding:12px;cursor:pointer" style-hover="background:#8ace53">Inviter ansatt</button>
+
+          <sc-if value="{{ invHasError }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:16px;font-size:13px;color:#b23e1d;display:flex;align-items:flex-start;gap:8px;line-height:1.5"><span style="width:6px;height:6px;border-radius:50%;background:#b23e1d;display:inline-block;margin-top:6px"></span>{{ invErrorText }}</div>
+          </sc-if>
+          <sc-if value="{{ invHasOk }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px;background:#f1f8ea;border:1px solid #cfe6b6;border-radius:10px;padding:16px">
+              <div style="font-size:13px;font-weight:600;color:#2c5318;margin-bottom:12px">✓ {{ invOkName }} er lagt til. Del innloggingen:</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#2c333a;line-height:1.7;background:#fff;border:1px solid #d6e6c4;border-radius:7px;padding:11px 13px">
+                <div>E-post: <b>{{ invOkEmail }}</b></div>
+                <div>Passord: <b>{{ invOkPw }}</b></div>
+              </div>
+              <button onClick="{{ copyInvite }}" style="margin-top:12px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;color:#2c5318;background:#fff;border:1px solid #cfe6b6;border-radius:7px;padding:8px 14px;cursor:pointer" style-hover="border-color:#7ac143">{{ copyLabel }}</button>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- Users table -->
+        <div style="background:#fff;border:1px solid #e3e7e4;border-radius:12px;overflow:hidden">
+          <div style="padding:18px 24px;border-bottom:1px solid #eef1ee;display:flex;justify-content:space-between;align-items:center">
+            <h3 style="font-family:'Archivo',sans-serif;font-size:18px;font-weight:600;color:#2c333a;margin:0">Registrerte ansatte</h3>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8a938c">{{ userCount }} totalt</span>
+          </div>
+          <sc-if value="{{ adminHasMsg }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:12px 24px;background:#fbf0e2;color:#8a4a14;font-size:13px;border-bottom:1px solid #eef1ee">{{ adminMsg }}</div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ userRows }}" as="row" hint-placeholder-count="2">
+              <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto auto;gap:16px;align-items:center;padding:16px 24px;border-bottom:1px solid #f1f3f1">
+                <div style="min-width:0">
+                  <div style="font-family:'Archivo',sans-serif;font-weight:600;font-size:15px;color:#2c333a;display:flex;align-items:center;gap:8px">{{ row.name }}<sc-if value="{{ row.isYou }}" hint-placeholder-val="{{ false }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;color:#5fa531;background:#f1f8ea;border:1px solid #cfe6b6;padding:1px 6px;border-radius:4px">deg</span></sc-if></div>
+                  <div style="font-size:13px;color:#8a938c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ row.email }}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="{{ row.statusDot }}"></span>
+                  <span style="font-size:13px;color:#5b646b">{{ row.statusLabel }}</span>
+                </div>
+                <select value="{{ row.role }}" onChange="{{ row.onRoleChange }}" style="font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:7px 10px;border:1px solid #d4dad4;border-radius:7px;background:#fff;color:#2c333a;outline:none;cursor:pointer" style-focus="border-color:#7ac143">
+                  <option value="bruker">Bruker</option>
+                  <option value="admin">Administrator</option>
+                </select>
+                <button onClick="{{ row.onRemove }}" title="Fjern ansatt" style="font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:500;color:#b23e1d;background:none;border:1px solid #efc4bc;border-radius:7px;padding:7px 12px;cursor:pointer;white-space:nowrap" style-hover="background:#fbe9e6">Fjern</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    const users = this.loadUsers();
+    let sessionEmail = null, lastScreen = 'site';
+    try { sessionEmail = localStorage.getItem('infranova_session'); } catch(e){}
+    try { lastScreen = localStorage.getItem('infranova_screen') || 'site'; } catch(e){}
+    const current = sessionEmail ? users.find(u => u.email.toLowerCase() === String(sessionEmail).toLowerCase()) : null;
+    this.state = {
+      screen: (current && lastScreen === 'tools') ? 'tools' : 'site',
+      email: '', pw: '', loginError: false,
+      users: users,
+      sessionEmail: current ? current.email : null,
+      toolsTab: 'verktoy',
+      invName: '', invEmail: '', invRole: 'bruker', invResult: null,
+      adminMsg: null, copied: false
+    };
+  }
+
+  loadUsers(){
+    let users = null;
+    try { const raw = localStorage.getItem('infranova_users'); if (raw) users = JSON.parse(raw); } catch(e){}
+    if (!users || !Array.isArray(users) || users.length === 0) {
+      users = [{ id:'u1', name:'Magne Knutsen', email:'magne@infranova.no', password:'InfraNova-2025!', role:'admin', status:'aktiv' }];
+      try { localStorage.setItem('infranova_users', JSON.stringify(users)); } catch(e){}
+    }
+    return users;
+  }
+
+  saveUsers(users){
+    try { localStorage.setItem('infranova_users', JSON.stringify(users)); } catch(e){}
+    this.setState({ users });
+  }
+
+  setScreen(s){
+    try { localStorage.setItem('infranova_screen', s); } catch(e){}
+    this.setState({ screen: s, loginError: false });
+  }
+
+  submitLogin(){
+    const email = (this.state.email||'').trim().toLowerCase();
+    const pw = this.state.pw||'';
+    let u = this.state.users.find(x => x.email.toLowerCase() === email && x.password === pw && x.status !== 'deaktivert');
+    if (u) {
+      let users = this.state.users;
+      if (u.status === 'invitert') {
+        users = users.map(x => x.id === u.id ? { ...x, status:'aktiv' } : x);
+        try { localStorage.setItem('infranova_users', JSON.stringify(users)); } catch(e){}
+      }
+      try { localStorage.setItem('infranova_session', u.email); localStorage.setItem('infranova_screen','tools'); } catch(e){}
+      this.setState({ sessionEmail: u.email, screen:'tools', loginError:false, pw:'', email:'', users, toolsTab:'verktoy' });
+    } else {
+      this.setState({ loginError: true });
+    }
+  }
+
+  logout(){
+    try { localStorage.removeItem('infranova_session'); localStorage.setItem('infranova_screen','site'); } catch(e){}
+    this.setState({ sessionEmail: null, screen:'site', pw:'', email:'' });
+  }
+
+  genPassword(){
+    const a='ABCDEFGHJKLMNPQRSTUVWXYZ', b='abcdefghijkmnpqrstuvwxyz', n='23456789', s='!@#%';
+    const pick = set => set[Math.floor(Math.random()*set.length)];
+    return 'Infra-' + pick(a)+pick(b)+pick(b)+pick(b)+pick(n)+pick(n)+pick(s);
+  }
+
+  inviteUser(){
+    const name = (this.state.invName||'').trim();
+    const email = (this.state.invEmail||'').trim();
+    const role = this.state.invRole || 'bruker';
+    if (!name || !email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      this.setState({ invResult: { error: 'Fyll inn navn og en gyldig e-postadresse.' } });
+      return;
+    }
+    if (this.state.users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+      this.setState({ invResult: { error: 'En ansatt med denne e-posten finnes allerede.' } });
+      return;
+    }
+    const password = this.genPassword();
+    const user = { id:'u'+Date.now(), name, email, password, role, status:'invitert' };
+    this.saveUsers([...this.state.users, user]);
+    this.setState({ invName:'', invEmail:'', invRole:'bruker', invResult:{ ok:true, name, email, password }, copied:false });
+  }
+
+  setRole(id, role){
+    this.saveUsers(this.state.users.map(u => u.id===id ? { ...u, role } : u));
+  }
+
+  removeUser(id){
+    const u = this.state.users.find(x=>x.id===id);
+    if (!u) return;
+    const admins = this.state.users.filter(x=>x.role==='admin' && x.status!=='deaktivert');
+    if (u.role==='admin' && admins.length<=1) { this.setState({ adminMsg:'Kan ikke fjerne den siste administratoren.' }); return; }
+    this.saveUsers(this.state.users.filter(x=>x.id!==id));
+    this.setState({ adminMsg:null });
+  }
+
+  renderVals(){
+    const current = this.state.users.find(u => u.email === this.state.sessionEmail) || null;
+    const isAdmin = !!(current && current.role === 'admin');
+    const loggedIn = !!current;
+    const screen = this.state.screen;
+    const roleLabel = r => r==='admin' ? 'Administrator' : 'Bruker';
+    const statusColor = st => st==='aktiv' ? '#5fa531' : (st==='invitert' ? '#c2601a' : '#9aa29c');
+    const statusLabel = st => st==='aktiv' ? 'Aktiv' : (st==='invitert' ? 'Invitert' : 'Deaktivert');
+
+    const showTools = screen==='tools' && loggedIn;
+    const showLogin = screen==='login' || (screen==='tools' && !loggedIn);
+    const tab = this.state.toolsTab;
+
+    const tabBase = { fontFamily:"'IBM Plex Sans',sans-serif", fontSize:'13.5px', fontWeight:600, borderRadius:'7px', padding:'8px 14px', cursor:'pointer', border:'1px solid transparent', whiteSpace:'nowrap', transition:'all .12s' };
+    const tabOn = { ...tabBase, background:'rgba(255,255,255,.12)', color:'#fff', borderColor:'rgba(255,255,255,.18)' };
+    const tabOff = { ...tabBase, background:'none', color:'rgba(255,255,255,.62)' };
+
+    const servicesRaw = [
+      { num:'01', title:'Prosjektering', desc:'Tekniske planer og prosjekteringsunderlag for vei- og anleggsprosjekter.', img:'assets/tjeneste-prosjektering.png', imgAlt:'Prosjektering hos Infranova – gjennomgang av vegplan' },
+      { num:'02', title:'Masseberegning & mengdekontroll', desc:'Beregning og kontroll av masser og mengder mot modell, profil og fakturagrunnlag.', img:'assets/tjeneste-masseberegning.png', imgAlt:'Infranova – masseberegning og mengdekontroll i 3D-modell' },
+      { num:'03', title:'Kalkulasjon', desc:'Pris- og kostnadskalkyler som grunnlag for tilbud og gjennomføring.', img:'assets/tjeneste-kalkulasjon.png', imgAlt:'Infranova – kalkulasjon og prosjektgjennomgang på kontoret' },
+      { num:'04', title:'Kontraktsrådgivning', desc:'Rådgivning på kontrakt, oppfølging og håndtering av endringer og krav.', img:'assets/tjeneste-kontrakt.png', imgAlt:'Infranova – kontraktsrådgivning og gjennomgang av anleggskontrakt' },
+      { num:'05', title:'Prosjekt- & økonomioppfølging', desc:'Oppfølging av fremdrift, kvalitet, kontroll og økonomi gjennom hele prosjektet.', img:'assets/tjeneste-okonomi.png', imgAlt:'Infranova – prosjekt- og økonomioppfølging med rapportering' },
+      { num:'06', title:'Stikning — utsetting & innmåling', desc:'Utstikking og innmåling i felt med moderne måleutstyr.', img:'assets/tjeneste-stikning.png', imgAlt:'Infranova – stikning med totalstasjon i felt' },
+      { num:'07', title:'Dronekartlegging', desc:'Oppmåling med drone — ortofoto, terrengmodeller og volumberegning.', img:'assets/tjeneste-drone.png', imgAlt:'Infranova – dronekartlegging på anleggsplass' }
+    ];
+    const services = servicesRaw.map(s => ({
+      ...s,
+      hasImg: !!s.img,
+      imgEl: s.img ? React.createElement('img', { src: s.img, alt: s.imgAlt, style: { display:'block', width:'calc(100% + 60px)', height:'180px', objectFit:'cover', margin:'-32px -30px 22px' } }) : null
+    }));
+
+    const rawTools = [
+      { category:'Prosjektering', tag:'Vann og avløp', title:'Kapasitet & selvrens — avløpsledninger', desc:'Excel-regneark for beregning av kapasitet og selvrens i avløpsledninger.', active:true, download:true, href:'verktoy/maler/beregning-selvrens-avlopsledninger.xlsx' },
+      { category:'Landmåling & stikning', tag:'Landmåling', title:'UTM32 → Maps Made Easy', desc:'Konverter koordinater fra EPSG:25832 (UTM 32N) til WGS84 for georeferering i Maps Made Easy.', active:true, href:'verktoy/utm32-til-mapsmadeeasy.html' },
+      { category:'Landmåling & stikning', tag:'Stikning', title:'Stikningsdata', desc:'Klargjør og eksporter stikningsdata til feltutstyr.', active:false },
+      { category:'Masse, mengde & kalkyle', tag:'Python · demo', title:'Masseberegning (demo)', desc:'Live beregning med Python (Pyodide) i nettleseren, og Excel-mal til nedlasting. Mal for nye verktøy.', active:true, href:'verktoy/python-kalkulator-demo.html' },
+      { category:'Masse, mengde & kalkyle', tag:'Kontroll', title:'Mengdekontroll', desc:'Kontroller utførte mengder mot fakturagrunnlag.', active:false },
+      { category:'Masse, mengde & kalkyle', tag:'Økonomi', title:'Kalkyleverktøy', desc:'Maler og verktøy for pris- og kostnadskalkyler.', active:false },
+      { category:'Drone', tag:'Drone', title:'Dronebilder → ortofoto', desc:'Prosesser dronebilder til ortofoto og terrengmodell.', active:false }
+    ];
+    const decorated = rawTools.map(t => {
+      const isDownload = !!t.download;
+      return { ...t, download:isDownload, activeLink: !!t.active && !isDownload, inactive: !t.active && !isDownload };
+    });
+    const catOrder = ['Prosjektering','Landmåling & stikning','Masse, mengde & kalkyle','Drone'];
+    const toolGroups = catOrder.map(c => {
+      const items = decorated.filter(t => t.category === c);
+      return { category:c, items, label: items.length + ' verktøy' };
+    }).filter(g => g.items.length > 0);
+
+    const userRows = this.state.users.map(u => ({
+      id:u.id, name:u.name, email:u.email, role:u.role,
+      statusLabel: statusLabel(u.status),
+      statusDot: { width:'8px', height:'8px', borderRadius:'50%', display:'inline-block', background: statusColor(u.status) },
+      isYou: !!(current && u.email===current.email),
+      onRoleChange: (e)=> this.setRole(u.id, e.target.value),
+      onRemove: ()=> this.removeUser(u.id)
+    }));
+
+    const inv = this.state.invResult;
+
+    return {
+      showSite: screen==='site',
+      showLogin: showLogin,
+      showTools: showTools,
+      loggedIn: loggedIn,
+      notLoggedIn: !loggedIn,
+      isAdmin: isAdmin,
+      showVerktoy: tab==='verktoy' || !isAdmin,
+      showAnsatte: tab==='ansatte' && isAdmin,
+      tabVerktoyStyle: (tab==='verktoy' || !isAdmin) ? tabOn : tabOff,
+      tabAnsatteStyle: tab==='ansatte' ? tabOn : tabOff,
+
+      goLogin: ()=> this.setScreen('login'),
+      goSite: ()=> this.setScreen('site'),
+      goTools: ()=> this.setScreen('tools'),
+      logout: ()=> this.logout(),
+      setTabVerktoy: ()=> this.setState({ toolsTab:'verktoy' }),
+      setTabAnsatte: ()=> this.setState({ toolsTab:'ansatte', adminMsg:null }),
+
+      email: this.state.email,
+      pw: this.state.pw,
+      onEmailInput: (e)=> this.setState({ email:e.target.value, loginError:false }),
+      onPwInput: (e)=> this.setState({ pw:e.target.value, loginError:false }),
+      onPwKey: (e)=> { if (e.key==='Enter') this.submitLogin(); },
+      submitLogin: ()=> this.submitLogin(),
+      loginError: this.state.loginError,
+
+      currentName: current ? current.name : '',
+      currentRoleLabel: current ? roleLabel(current.role) : '',
+
+      services, toolGroups, userRows,
+      userCount: this.state.users.length,
+      adminHasMsg: !!this.state.adminMsg,
+      adminMsg: this.state.adminMsg || '',
+
+      invName: this.state.invName,
+      invEmail: this.state.invEmail,
+      invRole: this.state.invRole,
+      onInvName: (e)=> this.setState({ invName:e.target.value }),
+      onInvEmail: (e)=> this.setState({ invEmail:e.target.value }),
+      onInvRole: (e)=> this.setState({ invRole:e.target.value }),
+      doInvite: ()=> this.inviteUser(),
+      invHasError: !!(inv && inv.error),
+      invErrorText: inv && inv.error ? inv.error : '',
+      invHasOk: !!(inv && inv.ok),
+      invOkName: inv && inv.ok ? inv.name : '',
+      invOkEmail: inv && inv.ok ? inv.email : '',
+      invOkPw: inv && inv.ok ? inv.password : '',
+      copyLabel: this.state.copied ? 'Kopiert ✓' : 'Kopier innlogging',
+      copyInvite: ()=> {
+        if (!inv || !inv.ok) return;
+        const txt = inv.name + '\nE-post: ' + inv.email + '\nMidlertidig passord: ' + inv.password;
+        try { navigator.clipboard.writeText(txt); } catch(e){}
+        this.setState({ copied:true });
+      },
+      year: 2026
+    };
+  }
+}
+</script>
+</body>
+</html>
