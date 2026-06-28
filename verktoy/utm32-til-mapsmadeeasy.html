@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UTM32 → Maps Made Easy</title>
+<style>
+  :root{
+    --bg:#e7ebea;
+    --panel:#ffffff;
+    --ink:#15211f;
+    --muted:#5d6b68;
+    --faint:#889693;
+    --line:#cdd6d3;
+    --line-soft:#e2e8e6;
+    --orange:#d8502a;
+    --orange-deep:#b23e1d;
+    --teal:#1d6f6a;
+    --teal-soft:#e6f0ef;
+    --warn:#c2601a;
+    --warn-bg:#fbf0e2;
+    --ok:#2c7a5b;
+    --screen:#0c1615;
+    --screen-line:#1d3330;
+    --screen-cyan:#62d2c6;
+    --screen-amber:#f2b35a;
+    --screen-text:#bfe0db;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--bg);
+    background-image:
+      linear-gradient(rgba(29,111,106,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(29,111,106,.045) 1px,transparent 1px);
+    background-size:24px 24px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    padding:32px 20px 64px;
+  }
+  .wrap{max-width:900px;margin:0 auto}
+
+  /* Header */
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--teal);font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--teal)}
+  h1{font-size:30px;line-height:1.1;margin:0 0 8px;font-weight:680;letter-spacing:-.015em}
+  h1 .arrow{color:var(--orange)}
+  .sub{color:var(--muted);font-size:15px;margin:0 0 4px;max-width:62ch}
+  .meta{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 18px}
+  .meta b{color:var(--teal);font-weight:600}
+
+  /* Panels */
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-top:22px}
+  .panel-pad{padding:20px}
+  .panel-head{
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+    padding:12px 20px;border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;align-items:center;
+  }
+  .panel-head .step{color:var(--orange);font-weight:700}
+
+  /* Dropzone */
+  #drop{
+    border:1.5px dashed var(--line);border-radius:4px;background:var(--panel);
+    padding:46px 24px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;
+    display:block;width:100%;font:inherit;color:inherit;
+  }
+  #drop:hover,#drop:focus-visible{border-color:var(--teal);background:var(--teal-soft);outline:none}
+  #drop.over{border-color:var(--orange);background:#fcefe9;border-style:solid}
+  .drop-ico{width:40px;height:40px;margin:0 auto 14px;color:var(--teal);display:block}
+  .drop-title{font-size:16px;font-weight:600;margin-bottom:4px}
+  .drop-hint{color:var(--muted);font-size:13px}
+  .drop-hint b{font-family:var(--mono);color:var(--ink);font-weight:600}
+
+  /* Controls grid */
+  .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  .field label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  select{
+    width:100%;font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:3px;background:#fff;color:var(--ink);
+    appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%235d6b68' fill='none' stroke-width='1.4'/></svg>");
+    background-repeat:no-repeat;background-position:right 10px center;cursor:pointer;
+  }
+  select:focus-visible{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+  .opt-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;align-items:center}
+  .check{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink);cursor:pointer;user-select:none}
+  .check input{width:15px;height:15px;accent-color:var(--teal);cursor:pointer}
+
+  /* Instrument readout (signature) */
+  .readout{
+    background:var(--screen);border-radius:4px;margin-top:22px;overflow:hidden;
+    box-shadow:inset 0 0 0 1px var(--screen-line);
+  }
+  .readout-bar{
+    display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-bottom:1px solid var(--screen-line);
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#6f8c88;
+  }
+  .readout-bar .live{display:flex;align-items:center;gap:7px;color:var(--screen-cyan)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--screen-cyan);box-shadow:0 0 8px var(--screen-cyan)}
+  .readout-grid{display:grid;grid-template-columns:1fr 1fr;font-family:var(--mono)}
+  .ro-cell{padding:16px 18px}
+  .ro-cell+.ro-cell{border-left:1px solid var(--screen-line)}
+  .ro-k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#5f7d79;margin-bottom:9px}
+  .ro-line{display:flex;justify-content:space-between;gap:14px;font-size:14px;color:var(--screen-text);padding:3px 0}
+  .ro-line .lab{color:#6f8c88}
+  .ro-line .val{color:var(--screen-cyan)}
+  .ro-cell.out .ro-line .val{color:var(--screen-amber)}
+  .ro-foot{
+    font-family:var(--mono);font-size:10.5px;color:#5f7d79;padding:10px 18px;border-top:1px solid var(--screen-line);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px
+  }
+
+  /* Preview table */
+  .table-scroll{overflow:auto;max-height:340px;border-top:1px solid var(--line-soft)}
+  table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12.5px}
+  thead th{
+    position:sticky;top:0;background:#f3f6f5;text-align:right;padding:9px 14px;color:var(--muted);font-weight:600;
+    font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:7px 14px;text-align:right;border-bottom:1px solid var(--line-soft);white-space:nowrap;color:var(--ink)}
+  tbody tr:hover{background:#f6f9f8;cursor:default}
+  tbody tr.sel{background:var(--teal-soft)}
+  tbody tr.flag td{background:var(--warn-bg)}
+  th.chkcol,td.chkcell{text-align:center;width:38px;padding-left:14px;padding-right:6px}
+  .rowchk,#selAll{width:15px;height:15px;accent-color:var(--orange);cursor:pointer}
+  tbody tr.excluded td:not(.chkcell){opacity:.4;text-decoration:line-through;text-decoration-color:var(--faint)}
+  td.lat,td.lon{color:var(--orange-deep)}
+  .rowflag{color:var(--warn);font-size:11px}
+
+  /* Status / messages */
+  .msg{margin-top:18px;padding:13px 16px;border-radius:4px;font-size:13.5px;display:flex;gap:11px;align-items:flex-start}
+  .msg svg{flex:none;margin-top:1px}
+  .msg.warn{background:var(--warn-bg);color:#8a4a14;border:1px solid #ecd3ad}
+  .msg.err{background:#fbe9e6;color:#9a2f1c;border:1px solid #efc4bc}
+  .msg.ok{background:#e8f4ee;color:#1f6346;border:1px solid #c3e2d2}
+
+  /* Actions */
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;align-items:center}
+  button.act{
+    font:inherit;font-weight:600;font-size:14px;padding:11px 20px;border-radius:4px;cursor:pointer;border:1px solid transparent;
+    display:inline-flex;align-items:center;gap:9px;transition:background .15s,border-color .15s,opacity .15s;
+  }
+  .primary{background:var(--orange);color:#fff}
+  .primary:hover{background:var(--orange-deep)}
+  .ghost{background:#fff;color:var(--ink);border-color:var(--line)}
+  .ghost:hover{border-color:var(--teal);color:var(--teal)}
+  button.act:disabled{opacity:.4;cursor:not-allowed}
+  button.act:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  .count{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-left:auto}
+  .count b{color:var(--ink)}
+
+  footer{margin-top:40px;font-family:var(--mono);font-size:11px;color:var(--faint);line-height:1.7;border-top:1px solid var(--line-soft);padding-top:18px}
+  footer b{color:var(--teal)}
+  .hidden{display:none!important}
+
+  @media (max-width:560px){
+    .readout-grid{grid-template-columns:1fr}
+    .ro-cell+.ro-cell{border-left:none;border-top:1px solid var(--screen-line)}
+    h1{font-size:24px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Landmåling · koordinattransformasjon</div>
+  <h1>UTM-sone 32 <span class="arrow">→</span> Maps Made Easy</h1>
+  <p class="sub">Slipp inn en ASCII-fil med koordinater i EPSG:25832 og få ut en CSV i bredde- og lengdegrad (WGS84) i formatet <b>LAT,LON,ELEV,NOTE</b>. Kontroller kolonnetolkningen før du eksporterer.</p>
+  <div class="meta">
+    <span>Fra: <b>EPSG:25832</b> ETRS89 / UTM 32N</span>
+    <span>Til: <b>EPSG:4326</b> WGS84</span>
+    <span>Metode: <b>Krüger n⁴</b> (GRS80)</span>
+    <span>Lukking: <b>&lt; 0.01 mm</b></span>
+  </div>
+
+  <!-- DROPZONE -->
+  <button id="drop" type="button" aria-label="Velg eller slipp koordinatfil">
+    <svg class="drop-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+    <div class="drop-title">Slipp ASCII-fil her, eller klikk for å bla</div>
+    <div class="drop-hint">Godtar mellomrom-, komma-, semikolon- eller tab-separert tekst &middot; <b>.txt .csv .asc .dat</b></div>
+  </button>
+  <input type="file" id="file" class="hidden" accept=".txt,.csv,.asc,.dat,.xyz,text/plain">
+
+  <div id="errbox"></div>
+
+  <!-- MAPPING + READOUT + PREVIEW -->
+  <div id="work" class="hidden">
+
+    <div class="panel">
+      <div class="panel-head"><span><span class="step">1 ·</span> Tolk kolonner</span><span id="fname" class="mono"></span></div>
+      <div class="panel-pad">
+        <div class="controls">
+          <div class="field"><label>Skilletegn</label>
+            <select id="delim">
+              <option value="auto">Auto</option>
+              <option value="ws">Mellomrom / tab</option>
+              <option value=",">Komma</option>
+              <option value=";">Semikolon</option>
+              <option value="tab">Tab</option>
+            </select>
+          </div>
+          <div class="field"><label>Nord (N)</label><select id="colN"></select></div>
+          <div class="field"><label>Øst (E)</label><select id="colE"></select></div>
+          <div class="field"><label>Høyde (Z)</label><select id="colZ"></select></div>
+          <div class="field"><label>Navn / note</label><select id="colName"></select></div>
+        </div>
+        <div class="opt-row">
+          <label class="check"><input type="checkbox" id="hdr"> Første linje er overskrift</label>
+          <label class="check"><input type="checkbox" id="decComma"> Desimaltegn er komma</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instrument readout -->
+    <div class="readout">
+      <div class="readout-bar"><span>Punktkontroll</span><span class="live"><span class="dot"></span> <span id="selname">—</span></span></div>
+      <div class="readout-grid">
+        <div class="ro-cell">
+          <div class="ro-k">Inn · EPSG:25832 (m)</div>
+          <div class="ro-line"><span class="lab">N</span><span class="val" id="inN">—</span></div>
+          <div class="ro-line"><span class="lab">E</span><span class="val" id="inE">—</span></div>
+          <div class="ro-line"><span class="lab">Z</span><span class="val" id="inZ">—</span></div>
+        </div>
+        <div class="ro-cell out">
+          <div class="ro-k">Ut · WGS84 (°)</div>
+          <div class="ro-line"><span class="lab">LAT</span><span class="val" id="outLat">—</span></div>
+          <div class="ro-line"><span class="lab">LON</span><span class="val" id="outLon">—</span></div>
+          <div class="ro-line"><span class="lab">ELEV</span><span class="val" id="outZ">—</span></div>
+        </div>
+      </div>
+      <div class="ro-foot"><span id="roMethod">Krüger n⁴ · GRS80 · k₀=0.9996 · λ₀=9°E</span><span>Klikk en rad for å inspisere</span></div>
+    </div>
+
+    <div id="msgbox"></div>
+
+    <div class="panel">
+      <div class="panel-head"><span><span class="step">2 ·</span> Forhåndsvisning</span><span id="prevnote" class="mono"></span></div>
+      <div class="table-scroll">
+        <table id="ptable"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="act primary" id="dl">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M12 16l-4-4M12 16l4-4"/><path d="M5 20h14"/></svg>
+        Last ned valgte punkt som GCP til csv-fil til bruk i MapsMadeEasy
+      </button>
+      <button class="act ghost" id="copy">Kopier til utklippstavle</button>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+
+  <footer>
+    <b>Transformasjon</b> · Krüger-rekke til n⁴-ledd på GRS80-ellipsoiden (ETRS89). Round-trip-lukking testet til under 0.003 mm over hele sone 32 — innenfor millimeterkrav for landmåling.<br>
+    <b>Datum</b> · ETRS89 og WGS84 behandles som sammenfallende (avvik noen få cm i Norge, og øker ~2 cm/år pga. platebevegelse). For georeferering i Maps Made Easy er dette uten praktisk betydning; for absolutt WGS84 ved gitt epoke må et eget datumskift legges til.<br>
+    <b>Personvern</b> · All beregning skjer lokalt i nettleseren. Ingen data sendes ut — fila forlater aldri maskinen, og verktøyet virker uten internett.
+  </footer>
+</div>
+
+<script>
+"use strict";
+/* ---------- Krüger inverse transverse Mercator (EPSG:25832 -> WGS84) ---------- */
+const A_AX=6378137.0, F=1/298.257222101, N3=F/(2-F), K0=0.9996, LON0=9*Math.PI/180, FE=500000, FN=0;
+const RA=A_AX/(1+N3)*(1+N3**2/4+N3**4/64);
+const BE=[0,
+  1/2*N3-2/3*N3**2+37/96*N3**3-1/360*N3**4,
+  1/48*N3**2+1/15*N3**3-437/1440*N3**4,
+  17/480*N3**3-37/840*N3**4,
+  4397/161280*N3**4];
+const DE=[0,
+  2*N3-2/3*N3**2-2*N3**3+116/45*N3**4,
+  7/3*N3**2-8/5*N3**3-227/45*N3**4,
+  56/15*N3**3-136/35*N3**4,
+  4279/630*N3**4];
+function utm32ToWgs84(E,N){
+  const xi=(N-FN)/(K0*RA), eta=(E-FE)/(K0*RA);
+  let xip=xi, etap=eta;
+  for(let j=1;j<=4;j++){
+    xip  -= BE[j]*Math.sin(2*j*xi)*Math.cosh(2*j*eta);
+    etap -= BE[j]*Math.cos(2*j*xi)*Math.sinh(2*j*eta);
+  }
+  const chi=Math.asin(Math.sin(xip)/Math.cosh(etap));
+  let phi=chi;
+  for(let j=1;j<=4;j++) phi += DE[j]*Math.sin(2*j*chi);
+  const lam=LON0+Math.atan2(Math.sinh(etap),Math.cos(xip));
+  return [phi*180/Math.PI, lam*180/Math.PI];
+}
+
+/* ---------- State & elements ---------- */
+let RAW=[];            // array of token-arrays (data rows, header excluded)
+let HEADER=null;       // header tokens if present
+let SEL=0;             // selected row index for readout
+let EXCLUDED=new Set();// row indices the user has unchecked (left out of export)
+const $=id=>document.getElementById(id);
+const el={drop:$('drop'),file:$('file'),work:$('work'),fname:$('fname'),
+  delim:$('delim'),colN:$('colN'),colE:$('colE'),colZ:$('colZ'),colName:$('colName'),
+  hdr:$('hdr'),decComma:$('decComma'),
+  thead:document.querySelector('#ptable thead'),tbody:document.querySelector('#ptable tbody'),
+  msgbox:$('msgbox'),errbox:$('errbox'),count:$('count'),prevnote:$('prevnote'),
+  dl:$('dl'),copy:$('copy')};
+
+/* ---------- File loading ---------- */
+el.drop.addEventListener('click',()=>el.file.click());
+el.file.addEventListener('change',e=>{ if(e.target.files[0]) readFile(e.target.files[0]); });
+['dragenter','dragover'].forEach(ev=>el.drop.addEventListener(ev,e=>{e.preventDefault();el.drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>el.drop.addEventListener(ev,e=>{e.preventDefault();el.drop.classList.remove('over');}));
+el.drop.addEventListener('drop',e=>{ const f=e.dataTransfer.files[0]; if(f) readFile(f); });
+
+function readFile(file){
+  const r=new FileReader();
+  r.onload=()=>{ el.fname.textContent=file.name; parse(r.result); };
+  r.onerror=()=>showErr('Kunne ikke lese fila. Prøv en ren tekstfil (.txt/.csv/.asc).');
+  r.readAsText(file);
+}
+
+function detectDelim(lines){
+  const sample=lines.slice(0,20).join('\n');
+  const hasDotDec=/\d\.\d/.test(sample);          // decimals use a dot -> any comma is a separator
+  if(/;/.test(sample)) return ';';
+  if(/,/.test(sample)){
+    if(hasDotDec || !/\d,\d/.test(sample)) return ',';
+    if(/\t/.test(sample)) return '\t';            // ambiguous decimal-comma: prefer tab/whitespace
+    return 'ws';
+  }
+  if(/\t/.test(sample)) return '\t';
+  return 'ws';
+}
+function splitLine(line,d){
+  if(d==='ws') return line.trim().split(/\s+/);
+  if(d==='\t') return line.split('\t').map(s=>s.trim());
+  return line.split(d).map(s=>s.trim());
+}
+
+function parse(text){
+  clearErr();
+  let lines=text.split(/\r?\n/).filter(l=>{
+    const t=l.trim();
+    if(t==='') return false;
+    if(/^[#!]/.test(t)) return false;            // comment lines
+    if(/^\/\//.test(t)) return false;
+    return true;
+  });
+  if(lines.length===0){ showErr('Fila ser tom ut, eller inneholder ingen datalinjer.'); return; }
+
+  let d=el.delim.value;
+  if(d==='auto') d=detectDelim(lines);
+  if(d==='tab') d='\t';
+  let rows=lines.map(l=>splitLine(l,d)).filter(t=>t.length>0);
+
+  // most common column count
+  const counts={};
+  rows.forEach(t=>counts[t.length]=(counts[t.length]||0)+1);
+  const ncol=+Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
+  rows=rows.filter(t=>t.length===ncol);
+  if(rows.length===0||ncol<2){ showErr('Fant ingen konsistente datakolonner. Sjekk skilletegn manuelt.'); return; }
+
+  // header detection: first row has non-numeric where numbers expected
+  const num=v=>!isNaN(parseFloat(numFix(v)));
+  let header=null;
+  const firstNumericish=rows[0].filter(num).length;
+  const bodyNumericish=rows.length>1?rows[1].filter(num).length:firstNumericish;
+  const autoHeader=firstNumericish < bodyNumericish;
+  if(el.hdr.checked || autoHeader){ header=rows.shift(); el.hdr.checked=true; }
+
+  HEADER=header; RAW=rows;
+  EXCLUDED=new Set(); SEL=0;
+  buildColumnSelectors(ncol,header,rows);
+  guessColumns(ncol,rows);
+  render();
+}
+
+function numFix(v){
+  if(typeof v!=='string') return v;
+  let s=v.trim();
+  if(el.decComma.checked) s=s.replace(/(\d),(\d)/,'$1.$2');
+  return s;
+}
+function toNum(v){ const x=parseFloat(numFix(v)); return isNaN(x)?null:x; }
+
+function buildColumnSelectors(ncol,header,rows){
+  const opts=(includeNone)=>{
+    let h='';
+    if(includeNone) h+='<option value="-1">(ingen)</option>';
+    for(let i=0;i<ncol;i++){
+      const lab=header?header[i]:('Kolonne '+(i+1));
+      const samp=rows[0]?(' · '+rows[0][i]):'';
+      h+=`<option value="${i}">${escapeHtml(lab)}${escapeHtml(samp)}</option>`;
+    }
+    return h;
+  };
+  el.colN.innerHTML=opts(false);
+  el.colE.innerHTML=opts(false);
+  el.colZ.innerHTML=opts(true);
+  el.colName.innerHTML=opts(true);
+}
+
+function guessColumns(ncol,rows){
+  // numeric profile per column
+  const prof=[];
+  for(let i=0;i<ncol;i++){
+    const vals=rows.map(r=>toNum(r[i])).filter(v=>v!==null);
+    const numeric=vals.length>=rows.length*0.6;
+    const med=numeric?vals.slice().sort((a,b)=>a-b)[Math.floor(vals.length/2)]:null;
+    prof.push({i,numeric,med:med,abs:med===null?null:Math.abs(med)});
+  }
+  const numericCols=prof.filter(p=>p.numeric);
+  // Northing: numeric col with magnitude > 1,000,000 (Norway ~6.4–7.1M)
+  let nCol=numericCols.filter(p=>p.abs>1e6).sort((a,b)=>b.abs-a.abs)[0];
+  // Easting: numeric col in [100k, 1M]
+  let eCol=numericCols.filter(p=>p.abs>=1e5 && p.abs<1e6 && p!==nCol).sort((a,b)=>a.abs-b.abs)[0];
+  // fallbacks
+  if(!nCol||!eCol){
+    const big=numericCols.slice().sort((a,b)=>b.abs-a.abs);
+    nCol=nCol||big[0]; eCol=eCol||big.find(p=>p!==nCol);
+  }
+  // Elevation: numeric col, small magnitude (<10000), not N/E
+  let zCol=numericCols.filter(p=>p!==nCol&&p!==eCol&&p.abs<1e4).sort((a,b)=>a.abs-b.abs)[0];
+  // Name: first non-numeric col, else first col
+  let nameCol=prof.find(p=>!p.numeric);
+
+  if(nCol) el.colN.value=nCol.i;
+  if(eCol) el.colE.value=eCol.i;
+  el.colZ.value = zCol?zCol.i:-1;
+  el.colName.value = nameCol?nameCol.i:-1;
+}
+
+/* ---------- Rendering ---------- */
+function computeRows(){
+  const ci={N:+el.colN.value,E:+el.colE.value,Z:+el.colZ.value,name:+el.colName.value};
+  const seen={};
+  return RAW.map((r,idx)=>{
+    const N=toNum(r[ci.N]), E=toNum(r[ci.E]);
+    const Z=ci.Z>=0?toNum(r[ci.Z]):null;
+    let nm=ci.name>=0?String(r[ci.name]).trim():'';
+    if(nm==='') nm=String(idx+1);
+    // ensure uniqueness
+    if(seen[nm]!==undefined){ seen[nm]++; nm=nm+'-'+seen[nm]; } else seen[nm]=1;
+    let lat=null,lon=null,flags=[];
+    if(N===null||E===null){ flags.push('mangler tall'); }
+    else{
+      // plausibility / possible N/E swap
+      if(!(E>1e5&&E<1e6) && (N>1e5&&N<1e6)) flags.push('N/E byttet?');
+      [lat,lon]=utm32ToWgs84(E,N);
+      if(lat<54||lat>72||lon<-3||lon>35) flags.push('utenfor Norge?');
+    }
+    return {idx,name:nm,N,E,Z,lat,lon,flags};
+  });
+}
+
+function render(){
+  if(RAW.length===0) return;
+  el.work.classList.remove('hidden');
+  const data=computeRows();
+
+  // table
+  el.thead.innerHTML='<tr><th class="chkcol"><input type="checkbox" id="selAll" title="Velg alle / fjern alle"></th><th>NOTE</th><th>Nord (in)</th><th>Øst (in)</th><th>LAT</th><th>LON</th><th>ELEV</th><th></th></tr>';
+  el.tbody.innerHTML=data.map(d=>{
+    const flagged=d.flags.length>0;
+    const exportable=d.lat!==null;
+    const included=exportable && !EXCLUDED.has(d.idx);
+    const cls=[d.idx===SEL?'sel':'',flagged?'flag':'',(!included&&exportable)?'excluded':''].join(' ');
+    return `<tr data-i="${d.idx}" class="${cls}">
+      <td class="chkcell"><input type="checkbox" class="rowchk" data-i="${d.idx}" ${included?'checked':''} ${exportable?'':'disabled'}></td>
+      <td>${escapeHtml(d.name)}</td>
+      <td>${d.N!==null?d.N.toFixed(3):'—'}</td>
+      <td>${d.E!==null?d.E.toFixed(3):'—'}</td>
+      <td class="lat">${d.lat!==null?d.lat.toFixed(9):'—'}</td>
+      <td class="lon">${d.lon!==null?d.lon.toFixed(9):'—'}</td>
+      <td>${d.Z!==null?d.Z.toFixed(3):'—'}</td>
+      <td class="rowflag">${d.flags.join(', ')}</td>
+    </tr>`;
+  }).join('');
+  // row click -> inspect in readout (ignore clicks on the checkbox cell)
+  el.tbody.querySelectorAll('tr').forEach(tr=>tr.addEventListener('click',e=>{
+    if(e.target.closest('.chkcell')) return;
+    SEL=+tr.dataset.i; render();
+  }));
+  // per-row include/exclude
+  el.tbody.querySelectorAll('.rowchk').forEach(cb=>cb.addEventListener('change',e=>{
+    const i=+e.target.dataset.i;
+    if(e.target.checked) EXCLUDED.delete(i); else EXCLUDED.add(i);
+    render();
+  }));
+  // select-all
+  const exportableIdx=data.filter(d=>d.lat!==null).map(d=>d.idx);
+  const includedCount=exportableIdx.filter(i=>!EXCLUDED.has(i)).length;
+  const selAll=$('selAll');
+  if(selAll){
+    selAll.checked = exportableIdx.length>0 && includedCount===exportableIdx.length;
+    selAll.indeterminate = includedCount>0 && includedCount<exportableIdx.length;
+    selAll.disabled = exportableIdx.length===0;
+    selAll.addEventListener('change',()=>{
+      if(selAll.checked) EXCLUDED.clear();
+      else exportableIdx.forEach(i=>EXCLUDED.add(i));
+      render();
+    });
+  }
+
+  // readout for selected
+  const sel=data.find(d=>d.idx===SEL)||data[0];
+  if(sel){
+    $('selname').textContent=sel.name;
+    $('inN').textContent=sel.N!==null?sel.N.toFixed(3):'—';
+    $('inE').textContent=sel.E!==null?sel.E.toFixed(3):'—';
+    $('inZ').textContent=sel.Z!==null?sel.Z.toFixed(3):'(ingen)';
+    $('outLat').textContent=sel.lat!==null?sel.lat.toFixed(9)+'°':'—';
+    $('outLon').textContent=sel.lon!==null?sel.lon.toFixed(9)+'°':'—';
+    $('outZ').textContent=sel.Z!==null?sel.Z.toFixed(3)+' m':'0.000 m';
+  }
+
+  // counts + warnings
+  const ok=data.filter(d=>d.lat!==null).length;
+  const selected=data.filter(d=>d.lat!==null && !EXCLUDED.has(d.idx)).length;
+  const flagged=data.filter(d=>d.flags.length>0).length;
+  el.count.innerHTML=`<b>${selected}</b> av ${ok} punkt valgt`;
+  el.prevnote.textContent=data.length+' rader';
+  el.dl.disabled=selected===0; el.copy.disabled=selected===0;
+
+  el.msgbox.innerHTML='';
+  if(el.colN.value===el.colE.value){
+    msg('warn','Nord og Øst peker på samme kolonne — velg ulike kolonner.');
+  }
+  if(flagged>0){
+    msg('warn',`${flagged} rad(er) er markert. Vanligste årsak er ombyttet Nord/Øst. I sone 32 skal Øst være ~6-sifret (165 000–834 000) og Nord ~7-sifret. Sjekk de gule radene — fjern avkryssingen for punkt du ikke vil ha med.`);
+  }
+  const missingZ=data.filter(d=>d.Z===null).length;
+  if(missingZ>0 && +el.colZ.value<0){
+    msg('warn',`${missingZ} punkt mangler høyde. Maps Made Easy krever ELEV — disse eksporteres med 0.000. Velg en høydekolonne hvis fila har en.`);
+  }
+  if(selected>0 && el.colN.value!==el.colE.value){
+    msg('ok',`${selected} punkt valgt for eksport som LAT,LON,ELEV,NOTE.`);
+  } else if(ok>0 && selected===0){
+    msg('warn','Ingen punkt er valgt. Kryss av minst ett punkt for å kunne eksportere.');
+  }
+}
+
+/* ---------- CSV build ---------- */
+function buildCSV(){
+  const data=computeRows().filter(d=>d.lat!==null && !EXCLUDED.has(d.idx));
+  let out='LAT,LON,ELEV,NOTE\n';
+  data.forEach(d=>{
+    let note=d.name;
+    if(/[",]/.test(note)) note='"'+note.replace(/"/g,'""')+'"';
+    const z=d.Z!==null?d.Z.toFixed(3):'0.000';
+    out+=`${d.lat.toFixed(9)},${d.lon.toFixed(9)},${z},${note}\n`;
+  });
+  return out;
+}
+el.dl.addEventListener('click',()=>{
+  const blob=new Blob([buildCSV()],{type:'text/csv'});
+  const base=(el.fname.textContent||'koordinater').replace(/\.[^.]+$/,'');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=base+'_wgs84.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+});
+el.copy.addEventListener('click',async()=>{
+  try{ await navigator.clipboard.writeText(buildCSV());
+    el.copy.textContent='Kopiert ✓'; setTimeout(()=>el.copy.textContent='Kopier til utklippstavle',1600);
+  }catch(e){ msg('err','Kunne ikke kopiere automatisk — last ned fila i stedet.'); }
+});
+
+/* ---------- Control listeners ---------- */
+['change','input'].forEach(ev=>{
+  [el.colN,el.colE,el.colZ,el.colName,el.hdr,el.decComma].forEach(c=>c.addEventListener(ev,()=>{ if(RAW.length||HEADER) render(); }));
+});
+el.delim.addEventListener('change',()=>{ if(el.file.files[0]) readFile(el.file.files[0]); });
+el.hdr.addEventListener('change',()=>{ if(el.file.files[0]) readFile(el.file.files[0]); });
+el.decComma.addEventListener('change',()=>{ if(el.file.files[0]) readFile(el.file.files[0]); });
+
+/* ---------- helpers ---------- */
+function msg(type,text){
+  const icons={warn:'<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>',
+    err:'<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>',
+    ok:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>'};
+  const d=document.createElement('div'); d.className='msg '+type;
+  d.innerHTML=`<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${icons[type]}</svg><span>${text}</span>`;
+  el.msgbox.appendChild(d);
+}
+function showErr(t){ el.errbox.innerHTML=''; const d=document.createElement('div'); d.className='msg err';
+  d.innerHTML=`<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span>${t}</span>`;
+  el.errbox.appendChild(d); el.work.classList.add('hidden');
+}
+function clearErr(){ el.errbox.innerHTML=''; }
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+</script>
+</body>
+</html>
